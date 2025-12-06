@@ -25,7 +25,7 @@ exports.getUserStatus = async (req, res) => {
     }
 
     // Auto-calculate and update eligibility based on prerequisites
-    await updateMentorCallEligibility(userId, userStatus);
+    await exports.updateMentorCallEligibility(userId, userStatus);
 
     // Fetch updated status after eligibility updates
     const finalStatus = await prisma.userStatus.findUnique({
@@ -106,7 +106,7 @@ exports.updateUserStatus = async (req, res) => {
     });
 
     // Auto-update mentor call eligibility flags
-    await updateMentorCallEligibility(userId, updatedStatus);
+    await exports.updateMentorCallEligibility(userId, updatedStatus);
 
     // Fetch final updated status after eligibility updates
     const finalStatus = await prisma.userStatus.findUnique({
@@ -135,7 +135,7 @@ exports.updateUserStatus = async (req, res) => {
  * - Step 8 (Jobs Applied) → Fourth call unlocked
  * - Step 9 (Final Review) → Fifth call unlocked
  */
-async function updateMentorCallEligibility(userId, userStatus) {
+exports.updateMentorCallEligibility = async function updateMentorCallEligibility(userId, userStatus) {
   const updates = {};
 
   // First mentor call: after Resume Rebuilding (Step 2)
@@ -245,7 +245,7 @@ exports.bookCall = async (req, res) => {
       data: updates,
     });
 
-    await updateMentorCallEligibility(userId, userStatus);
+    await exports.updateMentorCallEligibility(userId, userStatus);
 
     const finalStatus = await prisma.userStatus.findUnique({
       where: { id: userStatus.id },
@@ -287,7 +287,7 @@ exports.getMyStatus = async (req, res) => {
       });
     }
 
-    await updateMentorCallEligibility(userId, userStatus);
+    await exports.updateMentorCallEligibility(userId, userStatus);
 
     const finalStatus = await prisma.userStatus.findUnique({
       where: { id: userStatus.id },

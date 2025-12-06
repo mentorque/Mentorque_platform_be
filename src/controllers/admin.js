@@ -1031,49 +1031,165 @@ exports.getEligibleCalls = async (req, res) => {
       return res.json({ eligibleCalls: [] });
     }
 
-    // Determine eligible calls (eligible, not scheduled, not completed)
+    // First, update eligibility flags to ensure they're current
+    const userStatusController = require('./userStatus');
+    await userStatusController.updateMentorCallEligibility(userId, status);
+
+    // Fetch updated status after eligibility update
+    const updatedStatus = await prisma.userStatus.findFirst({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!updatedStatus) {
+      return res.json({ eligibleCalls: [] });
+    }
+
+    // Determine eligible calls for scheduling/rescheduling
+    // A call is eligible if:
+    // 1. It's unlocked (either flag is true OR prerequisite is met)
+    // 2. It's NOT currently scheduled in the future
+    // (We allow rescheduling completed calls)
     const eligibleCalls = [];
 
-    if (
-      status.eligibleForFirstMentorCall &&
-      !status.firstMentorCallScheduledAt &&
-      !status.firstMentorCallCompletedAt
-    ) {
+    console.log('📊 Checking eligible calls for user:', userId);
+    console.log('📊 Status check:', {
+      // Prerequisites
+      orientation: updatedStatus.orientation,
+      resumeRebuilding: updatedStatus.resumeRebuilding,
+      paymentMade: updatedStatus.paymentMade,
+      techDistributionAndExtension: updatedStatus.techDistributionAndExtension,
+      hasAppliedEnoughJobs: updatedStatus.hasAppliedEnoughJobs,
+      finalReview: updatedStatus.finalReview,
+      // Eligibility flags
+      eligibleForFirstMentorCall: updatedStatus.eligibleForFirstMentorCall,
+      eligibleForSecondMentorCall: updatedStatus.eligibleForSecondMentorCall,
+      eligibleForThirdMentorCall: updatedStatus.eligibleForThirdMentorCall,
+      eligibleForFourthMentorCall: updatedStatus.eligibleForFourthMentorCall,
+      eligibleForFifthMentorCall: updatedStatus.eligibleForFifthMentorCall,
+      // Scheduled/completed status
+      firstMentorCallScheduledAt: updatedStatus.firstMentorCallScheduledAt,
+      firstMentorCallCompletedAt: updatedStatus.firstMentorCallCompletedAt,
+      secondMentorCallScheduledAt: updatedStatus.secondMentorCallScheduledAt,
+      secondMentorCallCompletedAt: updatedStatus.secondMentorCallCompletedAt,
+      thirdMentorCallScheduledAt: updatedStatus.thirdMentorCallScheduledAt,
+      thirdMentorCallCompletedAt: updatedStatus.thirdMentorCallCompletedAt,
+      fourthMentorCallScheduledAt: updatedStatus.fourthMentorCallScheduledAt,
+      fourthMentorCallCompletedAt: updatedStatus.fourthMentorCallCompletedAt,
+      fifthMentorCallScheduledAt: updatedStatus.fifthMentorCallScheduledAt,
+      fifthMentorCallCompletedAt: updatedStatus.fifthMentorCallCompletedAt,
+    });
+
+    // First call: eligible if prerequisites met (Resume Rebuilding completed)
+    // Can be rescheduled even if completed, but not if scheduled in future
+    // According to PROGRESS_STEPS, call 1 unlocks after step 2 (Resume Rebuilding)
+    // Check both the flag and the prerequisite directly
+    const firstCallEligible = updatedStatus.eligibleForFirstMentorCall === true || updatedStatus.resumeRebuilding === true;
+    const firstCallFutureScheduled = updatedStatus.firstMentorCallScheduledAt && new Date(updatedStatus.firstMentorCallScheduledAt) > new Date();
+    
+    console.log('🔍 Call 1 eligibility check:', {
+      eligibleForFirstMentorCall: updatedStatus.eligibleForFirstMentorCall,
+      resumeRebuilding: updatedStatus.resumeRebuilding,
+      firstCallEligible,
+      firstCallScheduledAt: updatedStatus.firstMentorCallScheduledAt,
+      firstCallFutureScheduled,
+      firstCallCompletedAt: updatedStatus.firstMentorCallCompletedAt,
+    });
+    
+    if (firstCallEligible && !firstCallFutureScheduled) {
+      console.log('✅ Call 1 is eligible (can be scheduled/rescheduled)');
       eligibleCalls.push(1);
+    } else {
+      console.log('❌ Call 1 is NOT eligible');
     }
 
-    if (
-      status.eligibleForSecondMentorCall &&
-      !status.secondMentorCallScheduledAt &&
-      !status.secondMentorCallCompletedAt
-    ) {
+    // Second call: eligible if prerequisites met (Payment Made)
+    // Check both the flag and the prerequisite directly
+    const secondCallEligible = updatedStatus.eligibleForSecondMentorCall === true || updatedStatus.paymentMade === true;
+    const secondCallFutureScheduled = updatedStatus.secondMentorCallScheduledAt && new Date(updatedStatus.secondMentorCallScheduledAt) > new Date();
+    
+    console.log('🔍 Call 2 eligibility check:', {
+      eligibleForSecondMentorCall: updatedStatus.eligibleForSecondMentorCall,
+      paymentMade: updatedStatus.paymentMade,
+      secondCallEligible,
+      secondCallScheduledAt: updatedStatus.secondMentorCallScheduledAt,
+      secondCallFutureScheduled,
+      secondCallCompletedAt: updatedStatus.secondMentorCallCompletedAt,
+    });
+    
+    if (secondCallEligible && !secondCallFutureScheduled) {
+      console.log('✅ Call 2 is eligible (can be scheduled/rescheduled)');
       eligibleCalls.push(2);
+    } else {
+      console.log('❌ Call 2 is NOT eligible');
     }
 
-    if (
-      status.eligibleForThirdMentorCall &&
-      !status.thirdMentorCallScheduledAt &&
-      !status.thirdMentorCallCompletedAt
-    ) {
+    // Third call: eligible if prerequisites met (Tech Distribution)
+    // Check both the flag and the prerequisite directly
+    const thirdCallEligible = updatedStatus.eligibleForThirdMentorCall === true || updatedStatus.techDistributionAndExtension === true;
+    const thirdCallFutureScheduled = updatedStatus.thirdMentorCallScheduledAt && new Date(updatedStatus.thirdMentorCallScheduledAt) > new Date();
+    
+    console.log('🔍 Call 3 eligibility check:', {
+      eligibleForThirdMentorCall: updatedStatus.eligibleForThirdMentorCall,
+      techDistributionAndExtension: updatedStatus.techDistributionAndExtension,
+      thirdCallEligible,
+      thirdCallScheduledAt: updatedStatus.thirdMentorCallScheduledAt,
+      thirdCallFutureScheduled,
+      thirdCallCompletedAt: updatedStatus.thirdMentorCallCompletedAt,
+    });
+    
+    if (thirdCallEligible && !thirdCallFutureScheduled) {
+      console.log('✅ Call 3 is eligible (can be scheduled/rescheduled)');
       eligibleCalls.push(3);
+    } else {
+      console.log('❌ Call 3 is NOT eligible');
     }
 
-    if (
-      status.eligibleForFourthMentorCall &&
-      !status.fourthMentorCallScheduledAt &&
-      !status.fourthMentorCallCompletedAt
-    ) {
+    // Fourth call: eligible if prerequisites met (Jobs Applied)
+    // Check both the flag and the prerequisite directly
+    const fourthCallEligible = updatedStatus.eligibleForFourthMentorCall === true || updatedStatus.hasAppliedEnoughJobs === true;
+    const fourthCallFutureScheduled = updatedStatus.fourthMentorCallScheduledAt && new Date(updatedStatus.fourthMentorCallScheduledAt) > new Date();
+    
+    console.log('🔍 Call 4 eligibility check:', {
+      eligibleForFourthMentorCall: updatedStatus.eligibleForFourthMentorCall,
+      hasAppliedEnoughJobs: updatedStatus.hasAppliedEnoughJobs,
+      fourthCallEligible,
+      fourthCallScheduledAt: updatedStatus.fourthMentorCallScheduledAt,
+      fourthCallFutureScheduled,
+      fourthCallCompletedAt: updatedStatus.fourthMentorCallCompletedAt,
+    });
+    
+    if (fourthCallEligible && !fourthCallFutureScheduled) {
+      console.log('✅ Call 4 is eligible (can be scheduled/rescheduled)');
       eligibleCalls.push(4);
+    } else {
+      console.log('❌ Call 4 is NOT eligible');
     }
 
-    if (
-      status.eligibleForFifthMentorCall &&
-      !status.fifthMentorCallScheduledAt &&
-      !status.fifthMentorCallCompletedAt
-    ) {
+    // Fifth call: eligible if prerequisites met (Final Review)
+    // Check both the flag and the prerequisite directly
+    const fifthCallEligible = updatedStatus.eligibleForFifthMentorCall === true || updatedStatus.finalReview === true;
+    const fifthCallFutureScheduled = updatedStatus.fifthMentorCallScheduledAt && new Date(updatedStatus.fifthMentorCallScheduledAt) > new Date();
+    
+    console.log('🔍 Call 5 eligibility check:', {
+      eligibleForFifthMentorCall: updatedStatus.eligibleForFifthMentorCall,
+      finalReview: updatedStatus.finalReview,
+      fifthCallEligible,
+      fifthCallScheduledAt: updatedStatus.fifthMentorCallScheduledAt,
+      fifthCallFutureScheduled,
+      fifthCallCompletedAt: updatedStatus.fifthMentorCallCompletedAt,
+    });
+    
+    if (fifthCallEligible && !fifthCallFutureScheduled) {
+      console.log('✅ Call 5 is eligible (can be scheduled/rescheduled)');
       eligibleCalls.push(5);
+    } else {
+      console.log('❌ Call 5 is NOT eligible');
     }
 
+    console.log('📊 Final eligible calls array:', eligibleCalls);
     res.json({ eligibleCalls });
   } catch (error) {
     console.error('Get eligible calls error:', error);
@@ -1222,6 +1338,205 @@ exports.verifyMentor = async (req, res) => {
     console.error('Verify mentor error:', error);
     res.status(500).json({
       error: 'Failed to verify mentor',
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * DELETE /api/admin/approvals/users/:userId
+ * Decline/delete an unverified user (admin only)
+ */
+exports.declineUser = async (req, res) => {
+  try {
+    if (!req.adminMentor.isAdmin) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'Only admins can decline users',
+      });
+    }
+
+    const { userId } = req.params;
+
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found',
+      });
+    }
+
+    // Soft delete the user
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    res.json({
+      message: 'User declined and deleted successfully',
+    });
+  } catch (error) {
+    console.error('Decline user error:', error);
+    res.status(500).json({
+      error: 'Failed to decline user',
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * DELETE /api/admin/approvals/mentors/:mentorId
+ * Decline/delete an unverified mentor (admin only)
+ */
+exports.declineMentor = async (req, res) => {
+  try {
+    if (!req.adminMentor.isAdmin) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'Only admins can decline mentors',
+      });
+    }
+
+    const { mentorId } = req.params;
+
+    const mentor = await prisma.adminMentor.findFirst({
+      where: {
+        id: mentorId,
+        deletedAt: null,
+      },
+    });
+
+    if (!mentor) {
+      return res.status(404).json({
+        error: 'Mentor not found',
+      });
+    }
+
+    // Soft delete the mentor
+    await prisma.adminMentor.update({
+      where: { id: mentorId },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    res.json({
+      message: 'Mentor declined and deleted successfully',
+    });
+  } catch (error) {
+    console.error('Decline mentor error:', error);
+    res.status(500).json({
+      error: 'Failed to decline mentor',
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * DELETE /api/admin/users/:userId
+ * Soft delete a user (admin only)
+ */
+exports.deleteUser = async (req, res) => {
+  try {
+    if (!req.adminMentor.isAdmin) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'Only admins can delete users',
+      });
+    }
+
+    const { userId } = req.params;
+
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found',
+      });
+    }
+
+    // Soft delete the user
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    res.json({
+      message: 'User deleted successfully',
+    });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({
+      error: 'Failed to delete user',
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * DELETE /api/admin/mentors/:mentorId
+ * Soft delete a mentor (admin only)
+ */
+exports.deleteMentor = async (req, res) => {
+  try {
+    console.log('Delete mentor request received:', req.params);
+    
+    if (!req.adminMentor.isAdmin) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'Only admins can delete mentors',
+      });
+    }
+
+    const { mentorId } = req.params;
+    console.log('Attempting to delete mentor with ID:', mentorId);
+
+    const mentor = await prisma.adminMentor.findFirst({
+      where: {
+        id: mentorId,
+        deletedAt: null,
+      },
+    });
+
+    if (!mentor) {
+      console.log('Mentor not found:', mentorId);
+      return res.status(404).json({
+        error: 'Mentor not found',
+      });
+    }
+
+    console.log('Mentor found, soft deleting:', mentor.name);
+
+    // Soft delete the mentor
+    await prisma.adminMentor.update({
+      where: { id: mentorId },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    console.log('Mentor deleted successfully:', mentorId);
+    res.json({
+      message: 'Mentor deleted successfully',
+    });
+  } catch (error) {
+    console.error('Delete mentor error:', error);
+    res.status(500).json({
+      error: 'Failed to delete mentor',
       message: error.message,
     });
   }
@@ -1636,6 +1951,108 @@ exports.deleteMentorCall = async (req, res) => {
     console.error('Delete mentor call error:', error);
     res.status(500).json({
       error: 'Failed to delete mentor call',
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * GET /api/admin/users/:userId/scheduled-calls
+ * Get all scheduled mentor calls for a specific user (admin/mentor)
+ */
+exports.getUserScheduledCalls = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    console.log('📞 Fetching scheduled calls for user:', userId);
+
+    // Check if user exists
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+        deletedAt: null,
+      },
+      include: {
+        UserStatus: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found',
+      });
+    }
+
+    if (!user.UserStatus || user.UserStatus.deletedAt) {
+      return res.json({ sessions: [] });
+    }
+
+    const status = user.UserStatus;
+
+    // Extract all scheduled calls (including past/completed ones)
+    const callData = [
+      {
+        num: 1,
+        scheduledAt: status.firstMentorCallScheduledAt,
+        googleMeet: status.firstMentorCallGoogleMeetLink,
+        completedAt: status.firstMentorCallCompletedAt,
+      },
+      {
+        num: 2,
+        scheduledAt: status.secondMentorCallScheduledAt,
+        googleMeet: status.secondMentorCallGoogleMeetLink,
+        completedAt: status.secondMentorCallCompletedAt,
+      },
+      {
+        num: 3,
+        scheduledAt: status.thirdMentorCallScheduledAt,
+        googleMeet: status.thirdMentorCallGoogleMeetLink,
+        completedAt: status.thirdMentorCallCompletedAt,
+      },
+      {
+        num: 4,
+        scheduledAt: status.fourthMentorCallScheduledAt,
+        googleMeet: status.fourthMentorCallGoogleMeetLink,
+        completedAt: status.fourthMentorCallCompletedAt,
+      },
+      {
+        num: 5,
+        scheduledAt: status.fifthMentorCallScheduledAt,
+        googleMeet: status.fifthMentorCallGoogleMeetLink,
+        completedAt: status.fifthMentorCallCompletedAt,
+      },
+    ];
+
+    const sessions = [];
+    callData.forEach((call) => {
+      // Include sessions that have scheduledAt OR completedAt
+      if (call.scheduledAt || call.completedAt) {
+        const scheduledDate = call.scheduledAt ? new Date(call.scheduledAt) : call.completedAt ? new Date(call.completedAt) : new Date();
+        const isPast = scheduledDate < new Date();
+        sessions.push({
+          id: `${user.id}-call-${call.num}`,
+          userId: user.id,
+          callNumber: call.num,
+          scheduledAt: call.scheduledAt || call.completedAt, // Use completedAt if scheduledAt is null
+          googleMeetLink: call.googleMeet,
+          completedAt: call.completedAt,
+          isPast: isPast || Boolean(call.completedAt),
+        });
+      }
+    });
+
+    // Sort by scheduled date (most recent first)
+    sessions.sort(
+      (a, b) =>
+        new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()
+    );
+
+    console.log(`✅ Found ${sessions.length} scheduled sessions for user ${userId}`);
+    res.json({ sessions });
+  } catch (error) {
+    console.error('Get user scheduled calls error:', error);
+    res.status(500).json({
+      error: 'Failed to fetch scheduled calls',
       message: error.message,
     });
   }

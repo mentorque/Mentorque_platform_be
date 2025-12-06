@@ -144,18 +144,24 @@ exports.login = async (req, res) => {
     );
 
     // Set token in HTTP-only cookie (7 days expiration)
+    // For cross-origin (production), use sameSite: 'none' with secure: true
+    const isProduction = process.env.NODE_ENV === 'production'
     const cookieOptions = {
       httpOnly: true, // Prevents JavaScript access (XSS protection)
-      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: 'lax', // CSRF protection
+      secure: isProduction, // HTTPS only in production (required for sameSite: 'none')
+      sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       path: '/', // Available for all paths
+      domain: process.env.COOKIE_DOMAIN || undefined, // Set domain if needed for cross-subdomain
     };
 
     res.cookie('adminToken', token, cookieOptions);
 
+    // Also return token in response body as fallback for cross-origin requests
+    // Frontend can store it and send in Authorization header
     res.json({
       success: true,
+      token: token, // Include token in response for Authorization header fallback
       adminMentor: {
         id: adminMentor.id,
         email: adminMentor.email,

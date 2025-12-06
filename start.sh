@@ -5,11 +5,9 @@ set -e
 
 echo "🚀 Starting MentorQue Backend..."
 
-# Generate Prisma Client if needed
-if [ ! -d "node_modules/@prisma/client" ] || [ ! -f "generated/prisma/index.js" ]; then
-  echo "📦 Generating Prisma Client..."
-  npx prisma generate --schema=./generated/prisma/schema.prisma
-fi
+# Always generate Prisma Client to ensure correct binary targets for deployment
+echo "📦 Generating Prisma Client with correct binary targets..."
+npx prisma generate --schema=./generated/prisma/schema.prisma
 
 # Run database migrations
 if [ -n "$DATABASE_URL" ]; then

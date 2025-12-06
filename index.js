@@ -3,6 +3,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const adminRoutes = require('./src/routes/adminRoutes');
 const userRoutes = require('./src/routes/userRoutes');
+const progressRoutes = require('./src/routes/progressRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,10 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
+app.use('/progress', progressRoutes);
+
+// Mentor routes alias (mentors use same admin routes)
+app.use('/api/mentor', adminRoutes);
 
 // 404 handler
 app.use((req, res) => {

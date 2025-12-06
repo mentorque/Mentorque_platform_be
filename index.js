@@ -8,10 +8,39 @@ const progressRoutes = require('./src/routes/progressRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware - CORS configuration
+const allowedOrigins = process.env.FRONTEND_URL 
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : ['https://app.mentorquedu.com', 'http://localhost:5173', 'http://localhost:3000'];
+
+console.log('🌐 CORS allowed origins:', allowedOrigins);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Check if origin is in allowed list (exact match)
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // In development, allow all origins
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`⚠️  Development mode: Allowing origin ${origin}`);
+      return callback(null, true);
+    }
+    
+    // Log blocked origin for debugging
+    console.warn(`🚫 CORS blocked origin: ${origin}`);
+    callback(new Error(`Not allowed by CORS. Origin: ${origin}`));
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id'],
+  exposedHeaders: ['Content-Type'],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

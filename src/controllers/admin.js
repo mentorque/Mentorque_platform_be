@@ -189,12 +189,15 @@ exports.login = async (req, res) => {
  */
 exports.logout = async (req, res) => {
   try {
-    // Clear the adminToken cookie
+    // Clear the adminToken cookie with same settings as login
+    // Must match the cookie options used when setting the cookie
+    const isProduction = process.env.NODE_ENV === 'production'
     res.clearCookie('adminToken', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction, // Must match login cookie settings
+      sameSite: isProduction ? 'none' : 'lax', // Must match login cookie settings
       path: '/',
+      domain: process.env.COOKIE_DOMAIN || undefined, // Must match login cookie settings
     });
 
     res.json({

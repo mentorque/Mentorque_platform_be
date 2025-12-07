@@ -20,6 +20,7 @@ router.delete('/mentors/:mentorId', authenticateAdminToken, adminController.dele
 router.get('/mentors', authenticateAdminToken, adminController.getAllMentors);
 router.get('/users/:userId', authenticateAdminToken, adminController.getUserDetails);
 router.get('/users/:userId/jobs', authenticateAdminToken, adminController.getUserAppliedJobs);
+router.get('/users/:userId/jobs/stats', authenticateAdminToken, adminController.getUserAppliedJobsStats);
 router.get('/users/:userId/status', authenticateAdminToken, userStatusController.getUserStatus);
 router.get('/users/:userId/eligible-calls', authenticateAdminToken, adminController.getEligibleCalls);
 router.patch('/users/:userId/status', authenticateAdminToken, userStatusController.updateUserStatus);

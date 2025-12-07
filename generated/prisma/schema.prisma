@@ -150,3 +150,19 @@ model UserStatus {
   @@index([userId])
   @@index([deletedAt])
 }
+
+model MentorSessionNote {
+  id         String    @id @default(cuid())
+  userId     String
+  callNumber Int // 1, 2, 3, or 4
+  notes      String    @default("")
+  mentorId   String? // Optional: track which mentor added the note
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@unique([userId, callNumber])
+  @@index([userId])
+  @@index([callNumber])
+  @@index([deletedAt])
+}

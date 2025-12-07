@@ -43,6 +43,11 @@ export type AdminMentor = $Result.DefaultSelection<Prisma.$AdminMentorPayload>
  * 
  */
 export type UserStatus = $Result.DefaultSelection<Prisma.$UserStatusPayload>
+/**
+ * Model MentorSessionNote
+ * 
+ */
+export type MentorSessionNote = $Result.DefaultSelection<Prisma.$MentorSessionNotePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -221,6 +226,16 @@ export class PrismaClient<
     * ```
     */
   get userStatus(): Prisma.UserStatusDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.mentorSessionNote`: Exposes CRUD operations for the **MentorSessionNote** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MentorSessionNotes
+    * const mentorSessionNotes = await prisma.mentorSessionNote.findMany()
+    * ```
+    */
+  get mentorSessionNote(): Prisma.MentorSessionNoteDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -667,7 +682,8 @@ export namespace Prisma {
     AppliedJob: 'AppliedJob',
     Progress: 'Progress',
     AdminMentor: 'AdminMentor',
-    UserStatus: 'UserStatus'
+    UserStatus: 'UserStatus',
+    MentorSessionNote: 'MentorSessionNote'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -686,7 +702,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "apiKey" | "appliedJob" | "progress" | "adminMentor" | "userStatus"
+      modelProps: "user" | "apiKey" | "appliedJob" | "progress" | "adminMentor" | "userStatus" | "mentorSessionNote"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1134,6 +1150,80 @@ export namespace Prisma {
           }
         }
       }
+      MentorSessionNote: {
+        payload: Prisma.$MentorSessionNotePayload<ExtArgs>
+        fields: Prisma.MentorSessionNoteFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MentorSessionNoteFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MentorSessionNoteFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload>
+          }
+          findFirst: {
+            args: Prisma.MentorSessionNoteFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MentorSessionNoteFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload>
+          }
+          findMany: {
+            args: Prisma.MentorSessionNoteFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload>[]
+          }
+          create: {
+            args: Prisma.MentorSessionNoteCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload>
+          }
+          createMany: {
+            args: Prisma.MentorSessionNoteCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MentorSessionNoteCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload>[]
+          }
+          delete: {
+            args: Prisma.MentorSessionNoteDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload>
+          }
+          update: {
+            args: Prisma.MentorSessionNoteUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload>
+          }
+          deleteMany: {
+            args: Prisma.MentorSessionNoteDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MentorSessionNoteUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MentorSessionNoteUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload>[]
+          }
+          upsert: {
+            args: Prisma.MentorSessionNoteUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorSessionNotePayload>
+          }
+          aggregate: {
+            args: Prisma.MentorSessionNoteAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMentorSessionNote>
+          }
+          groupBy: {
+            args: Prisma.MentorSessionNoteGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MentorSessionNoteGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MentorSessionNoteCountArgs<ExtArgs>
+            result: $Utils.Optional<MentorSessionNoteCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1236,6 +1326,7 @@ export namespace Prisma {
     progress?: ProgressOmit
     adminMentor?: AdminMentorOmit
     userStatus?: UserStatusOmit
+    mentorSessionNote?: MentorSessionNoteOmit
   }
 
   /* Types for Logging */
@@ -8628,6 +8719,1074 @@ export namespace Prisma {
 
 
   /**
+   * Model MentorSessionNote
+   */
+
+  export type AggregateMentorSessionNote = {
+    _count: MentorSessionNoteCountAggregateOutputType | null
+    _avg: MentorSessionNoteAvgAggregateOutputType | null
+    _sum: MentorSessionNoteSumAggregateOutputType | null
+    _min: MentorSessionNoteMinAggregateOutputType | null
+    _max: MentorSessionNoteMaxAggregateOutputType | null
+  }
+
+  export type MentorSessionNoteAvgAggregateOutputType = {
+    callNumber: number | null
+  }
+
+  export type MentorSessionNoteSumAggregateOutputType = {
+    callNumber: number | null
+  }
+
+  export type MentorSessionNoteMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    callNumber: number | null
+    notes: string | null
+    mentorId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type MentorSessionNoteMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    callNumber: number | null
+    notes: string | null
+    mentorId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type MentorSessionNoteCountAggregateOutputType = {
+    id: number
+    userId: number
+    callNumber: number
+    notes: number
+    mentorId: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type MentorSessionNoteAvgAggregateInputType = {
+    callNumber?: true
+  }
+
+  export type MentorSessionNoteSumAggregateInputType = {
+    callNumber?: true
+  }
+
+  export type MentorSessionNoteMinAggregateInputType = {
+    id?: true
+    userId?: true
+    callNumber?: true
+    notes?: true
+    mentorId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type MentorSessionNoteMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    callNumber?: true
+    notes?: true
+    mentorId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type MentorSessionNoteCountAggregateInputType = {
+    id?: true
+    userId?: true
+    callNumber?: true
+    notes?: true
+    mentorId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type MentorSessionNoteAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorSessionNote to aggregate.
+     */
+    where?: MentorSessionNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorSessionNotes to fetch.
+     */
+    orderBy?: MentorSessionNoteOrderByWithRelationInput | MentorSessionNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MentorSessionNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorSessionNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorSessionNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MentorSessionNotes
+    **/
+    _count?: true | MentorSessionNoteCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MentorSessionNoteAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MentorSessionNoteSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MentorSessionNoteMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MentorSessionNoteMaxAggregateInputType
+  }
+
+  export type GetMentorSessionNoteAggregateType<T extends MentorSessionNoteAggregateArgs> = {
+        [P in keyof T & keyof AggregateMentorSessionNote]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMentorSessionNote[P]>
+      : GetScalarType<T[P], AggregateMentorSessionNote[P]>
+  }
+
+
+
+
+  export type MentorSessionNoteGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorSessionNoteWhereInput
+    orderBy?: MentorSessionNoteOrderByWithAggregationInput | MentorSessionNoteOrderByWithAggregationInput[]
+    by: MentorSessionNoteScalarFieldEnum[] | MentorSessionNoteScalarFieldEnum
+    having?: MentorSessionNoteScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MentorSessionNoteCountAggregateInputType | true
+    _avg?: MentorSessionNoteAvgAggregateInputType
+    _sum?: MentorSessionNoteSumAggregateInputType
+    _min?: MentorSessionNoteMinAggregateInputType
+    _max?: MentorSessionNoteMaxAggregateInputType
+  }
+
+  export type MentorSessionNoteGroupByOutputType = {
+    id: string
+    userId: string
+    callNumber: number
+    notes: string
+    mentorId: string | null
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: MentorSessionNoteCountAggregateOutputType | null
+    _avg: MentorSessionNoteAvgAggregateOutputType | null
+    _sum: MentorSessionNoteSumAggregateOutputType | null
+    _min: MentorSessionNoteMinAggregateOutputType | null
+    _max: MentorSessionNoteMaxAggregateOutputType | null
+  }
+
+  type GetMentorSessionNoteGroupByPayload<T extends MentorSessionNoteGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MentorSessionNoteGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MentorSessionNoteGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MentorSessionNoteGroupByOutputType[P]>
+            : GetScalarType<T[P], MentorSessionNoteGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MentorSessionNoteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    callNumber?: boolean
+    notes?: boolean
+    mentorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }, ExtArgs["result"]["mentorSessionNote"]>
+
+  export type MentorSessionNoteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    callNumber?: boolean
+    notes?: boolean
+    mentorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }, ExtArgs["result"]["mentorSessionNote"]>
+
+  export type MentorSessionNoteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    callNumber?: boolean
+    notes?: boolean
+    mentorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }, ExtArgs["result"]["mentorSessionNote"]>
+
+  export type MentorSessionNoteSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    callNumber?: boolean
+    notes?: boolean
+    mentorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type MentorSessionNoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "callNumber" | "notes" | "mentorId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["mentorSessionNote"]>
+
+  export type $MentorSessionNotePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MentorSessionNote"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      callNumber: number
+      notes: string
+      mentorId: string | null
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["mentorSessionNote"]>
+    composites: {}
+  }
+
+  type MentorSessionNoteGetPayload<S extends boolean | null | undefined | MentorSessionNoteDefaultArgs> = $Result.GetResult<Prisma.$MentorSessionNotePayload, S>
+
+  type MentorSessionNoteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MentorSessionNoteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MentorSessionNoteCountAggregateInputType | true
+    }
+
+  export interface MentorSessionNoteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MentorSessionNote'], meta: { name: 'MentorSessionNote' } }
+    /**
+     * Find zero or one MentorSessionNote that matches the filter.
+     * @param {MentorSessionNoteFindUniqueArgs} args - Arguments to find a MentorSessionNote
+     * @example
+     * // Get one MentorSessionNote
+     * const mentorSessionNote = await prisma.mentorSessionNote.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MentorSessionNoteFindUniqueArgs>(args: SelectSubset<T, MentorSessionNoteFindUniqueArgs<ExtArgs>>): Prisma__MentorSessionNoteClient<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MentorSessionNote that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MentorSessionNoteFindUniqueOrThrowArgs} args - Arguments to find a MentorSessionNote
+     * @example
+     * // Get one MentorSessionNote
+     * const mentorSessionNote = await prisma.mentorSessionNote.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MentorSessionNoteFindUniqueOrThrowArgs>(args: SelectSubset<T, MentorSessionNoteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MentorSessionNoteClient<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MentorSessionNote that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorSessionNoteFindFirstArgs} args - Arguments to find a MentorSessionNote
+     * @example
+     * // Get one MentorSessionNote
+     * const mentorSessionNote = await prisma.mentorSessionNote.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MentorSessionNoteFindFirstArgs>(args?: SelectSubset<T, MentorSessionNoteFindFirstArgs<ExtArgs>>): Prisma__MentorSessionNoteClient<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MentorSessionNote that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorSessionNoteFindFirstOrThrowArgs} args - Arguments to find a MentorSessionNote
+     * @example
+     * // Get one MentorSessionNote
+     * const mentorSessionNote = await prisma.mentorSessionNote.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MentorSessionNoteFindFirstOrThrowArgs>(args?: SelectSubset<T, MentorSessionNoteFindFirstOrThrowArgs<ExtArgs>>): Prisma__MentorSessionNoteClient<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MentorSessionNotes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorSessionNoteFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MentorSessionNotes
+     * const mentorSessionNotes = await prisma.mentorSessionNote.findMany()
+     * 
+     * // Get first 10 MentorSessionNotes
+     * const mentorSessionNotes = await prisma.mentorSessionNote.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mentorSessionNoteWithIdOnly = await prisma.mentorSessionNote.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MentorSessionNoteFindManyArgs>(args?: SelectSubset<T, MentorSessionNoteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MentorSessionNote.
+     * @param {MentorSessionNoteCreateArgs} args - Arguments to create a MentorSessionNote.
+     * @example
+     * // Create one MentorSessionNote
+     * const MentorSessionNote = await prisma.mentorSessionNote.create({
+     *   data: {
+     *     // ... data to create a MentorSessionNote
+     *   }
+     * })
+     * 
+     */
+    create<T extends MentorSessionNoteCreateArgs>(args: SelectSubset<T, MentorSessionNoteCreateArgs<ExtArgs>>): Prisma__MentorSessionNoteClient<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MentorSessionNotes.
+     * @param {MentorSessionNoteCreateManyArgs} args - Arguments to create many MentorSessionNotes.
+     * @example
+     * // Create many MentorSessionNotes
+     * const mentorSessionNote = await prisma.mentorSessionNote.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MentorSessionNoteCreateManyArgs>(args?: SelectSubset<T, MentorSessionNoteCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MentorSessionNotes and returns the data saved in the database.
+     * @param {MentorSessionNoteCreateManyAndReturnArgs} args - Arguments to create many MentorSessionNotes.
+     * @example
+     * // Create many MentorSessionNotes
+     * const mentorSessionNote = await prisma.mentorSessionNote.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MentorSessionNotes and only return the `id`
+     * const mentorSessionNoteWithIdOnly = await prisma.mentorSessionNote.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MentorSessionNoteCreateManyAndReturnArgs>(args?: SelectSubset<T, MentorSessionNoteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MentorSessionNote.
+     * @param {MentorSessionNoteDeleteArgs} args - Arguments to delete one MentorSessionNote.
+     * @example
+     * // Delete one MentorSessionNote
+     * const MentorSessionNote = await prisma.mentorSessionNote.delete({
+     *   where: {
+     *     // ... filter to delete one MentorSessionNote
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MentorSessionNoteDeleteArgs>(args: SelectSubset<T, MentorSessionNoteDeleteArgs<ExtArgs>>): Prisma__MentorSessionNoteClient<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MentorSessionNote.
+     * @param {MentorSessionNoteUpdateArgs} args - Arguments to update one MentorSessionNote.
+     * @example
+     * // Update one MentorSessionNote
+     * const mentorSessionNote = await prisma.mentorSessionNote.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MentorSessionNoteUpdateArgs>(args: SelectSubset<T, MentorSessionNoteUpdateArgs<ExtArgs>>): Prisma__MentorSessionNoteClient<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MentorSessionNotes.
+     * @param {MentorSessionNoteDeleteManyArgs} args - Arguments to filter MentorSessionNotes to delete.
+     * @example
+     * // Delete a few MentorSessionNotes
+     * const { count } = await prisma.mentorSessionNote.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MentorSessionNoteDeleteManyArgs>(args?: SelectSubset<T, MentorSessionNoteDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MentorSessionNotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorSessionNoteUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MentorSessionNotes
+     * const mentorSessionNote = await prisma.mentorSessionNote.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MentorSessionNoteUpdateManyArgs>(args: SelectSubset<T, MentorSessionNoteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MentorSessionNotes and returns the data updated in the database.
+     * @param {MentorSessionNoteUpdateManyAndReturnArgs} args - Arguments to update many MentorSessionNotes.
+     * @example
+     * // Update many MentorSessionNotes
+     * const mentorSessionNote = await prisma.mentorSessionNote.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MentorSessionNotes and only return the `id`
+     * const mentorSessionNoteWithIdOnly = await prisma.mentorSessionNote.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MentorSessionNoteUpdateManyAndReturnArgs>(args: SelectSubset<T, MentorSessionNoteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MentorSessionNote.
+     * @param {MentorSessionNoteUpsertArgs} args - Arguments to update or create a MentorSessionNote.
+     * @example
+     * // Update or create a MentorSessionNote
+     * const mentorSessionNote = await prisma.mentorSessionNote.upsert({
+     *   create: {
+     *     // ... data to create a MentorSessionNote
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MentorSessionNote we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MentorSessionNoteUpsertArgs>(args: SelectSubset<T, MentorSessionNoteUpsertArgs<ExtArgs>>): Prisma__MentorSessionNoteClient<$Result.GetResult<Prisma.$MentorSessionNotePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MentorSessionNotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorSessionNoteCountArgs} args - Arguments to filter MentorSessionNotes to count.
+     * @example
+     * // Count the number of MentorSessionNotes
+     * const count = await prisma.mentorSessionNote.count({
+     *   where: {
+     *     // ... the filter for the MentorSessionNotes we want to count
+     *   }
+     * })
+    **/
+    count<T extends MentorSessionNoteCountArgs>(
+      args?: Subset<T, MentorSessionNoteCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MentorSessionNoteCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MentorSessionNote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorSessionNoteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MentorSessionNoteAggregateArgs>(args: Subset<T, MentorSessionNoteAggregateArgs>): Prisma.PrismaPromise<GetMentorSessionNoteAggregateType<T>>
+
+    /**
+     * Group by MentorSessionNote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorSessionNoteGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MentorSessionNoteGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MentorSessionNoteGroupByArgs['orderBy'] }
+        : { orderBy?: MentorSessionNoteGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MentorSessionNoteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMentorSessionNoteGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MentorSessionNote model
+   */
+  readonly fields: MentorSessionNoteFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MentorSessionNote.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MentorSessionNoteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MentorSessionNote model
+   */
+  interface MentorSessionNoteFieldRefs {
+    readonly id: FieldRef<"MentorSessionNote", 'String'>
+    readonly userId: FieldRef<"MentorSessionNote", 'String'>
+    readonly callNumber: FieldRef<"MentorSessionNote", 'Int'>
+    readonly notes: FieldRef<"MentorSessionNote", 'String'>
+    readonly mentorId: FieldRef<"MentorSessionNote", 'String'>
+    readonly createdAt: FieldRef<"MentorSessionNote", 'DateTime'>
+    readonly updatedAt: FieldRef<"MentorSessionNote", 'DateTime'>
+    readonly deletedAt: FieldRef<"MentorSessionNote", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MentorSessionNote findUnique
+   */
+  export type MentorSessionNoteFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which MentorSessionNote to fetch.
+     */
+    where: MentorSessionNoteWhereUniqueInput
+  }
+
+  /**
+   * MentorSessionNote findUniqueOrThrow
+   */
+  export type MentorSessionNoteFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which MentorSessionNote to fetch.
+     */
+    where: MentorSessionNoteWhereUniqueInput
+  }
+
+  /**
+   * MentorSessionNote findFirst
+   */
+  export type MentorSessionNoteFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which MentorSessionNote to fetch.
+     */
+    where?: MentorSessionNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorSessionNotes to fetch.
+     */
+    orderBy?: MentorSessionNoteOrderByWithRelationInput | MentorSessionNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorSessionNotes.
+     */
+    cursor?: MentorSessionNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorSessionNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorSessionNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorSessionNotes.
+     */
+    distinct?: MentorSessionNoteScalarFieldEnum | MentorSessionNoteScalarFieldEnum[]
+  }
+
+  /**
+   * MentorSessionNote findFirstOrThrow
+   */
+  export type MentorSessionNoteFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which MentorSessionNote to fetch.
+     */
+    where?: MentorSessionNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorSessionNotes to fetch.
+     */
+    orderBy?: MentorSessionNoteOrderByWithRelationInput | MentorSessionNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorSessionNotes.
+     */
+    cursor?: MentorSessionNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorSessionNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorSessionNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorSessionNotes.
+     */
+    distinct?: MentorSessionNoteScalarFieldEnum | MentorSessionNoteScalarFieldEnum[]
+  }
+
+  /**
+   * MentorSessionNote findMany
+   */
+  export type MentorSessionNoteFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which MentorSessionNotes to fetch.
+     */
+    where?: MentorSessionNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorSessionNotes to fetch.
+     */
+    orderBy?: MentorSessionNoteOrderByWithRelationInput | MentorSessionNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MentorSessionNotes.
+     */
+    cursor?: MentorSessionNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorSessionNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorSessionNotes.
+     */
+    skip?: number
+    distinct?: MentorSessionNoteScalarFieldEnum | MentorSessionNoteScalarFieldEnum[]
+  }
+
+  /**
+   * MentorSessionNote create
+   */
+  export type MentorSessionNoteCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * The data needed to create a MentorSessionNote.
+     */
+    data: XOR<MentorSessionNoteCreateInput, MentorSessionNoteUncheckedCreateInput>
+  }
+
+  /**
+   * MentorSessionNote createMany
+   */
+  export type MentorSessionNoteCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MentorSessionNotes.
+     */
+    data: MentorSessionNoteCreateManyInput | MentorSessionNoteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MentorSessionNote createManyAndReturn
+   */
+  export type MentorSessionNoteCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * The data used to create many MentorSessionNotes.
+     */
+    data: MentorSessionNoteCreateManyInput | MentorSessionNoteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MentorSessionNote update
+   */
+  export type MentorSessionNoteUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * The data needed to update a MentorSessionNote.
+     */
+    data: XOR<MentorSessionNoteUpdateInput, MentorSessionNoteUncheckedUpdateInput>
+    /**
+     * Choose, which MentorSessionNote to update.
+     */
+    where: MentorSessionNoteWhereUniqueInput
+  }
+
+  /**
+   * MentorSessionNote updateMany
+   */
+  export type MentorSessionNoteUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MentorSessionNotes.
+     */
+    data: XOR<MentorSessionNoteUpdateManyMutationInput, MentorSessionNoteUncheckedUpdateManyInput>
+    /**
+     * Filter which MentorSessionNotes to update
+     */
+    where?: MentorSessionNoteWhereInput
+    /**
+     * Limit how many MentorSessionNotes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MentorSessionNote updateManyAndReturn
+   */
+  export type MentorSessionNoteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * The data used to update MentorSessionNotes.
+     */
+    data: XOR<MentorSessionNoteUpdateManyMutationInput, MentorSessionNoteUncheckedUpdateManyInput>
+    /**
+     * Filter which MentorSessionNotes to update
+     */
+    where?: MentorSessionNoteWhereInput
+    /**
+     * Limit how many MentorSessionNotes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MentorSessionNote upsert
+   */
+  export type MentorSessionNoteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * The filter to search for the MentorSessionNote to update in case it exists.
+     */
+    where: MentorSessionNoteWhereUniqueInput
+    /**
+     * In case the MentorSessionNote found by the `where` argument doesn't exist, create a new MentorSessionNote with this data.
+     */
+    create: XOR<MentorSessionNoteCreateInput, MentorSessionNoteUncheckedCreateInput>
+    /**
+     * In case the MentorSessionNote was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MentorSessionNoteUpdateInput, MentorSessionNoteUncheckedUpdateInput>
+  }
+
+  /**
+   * MentorSessionNote delete
+   */
+  export type MentorSessionNoteDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+    /**
+     * Filter which MentorSessionNote to delete.
+     */
+    where: MentorSessionNoteWhereUniqueInput
+  }
+
+  /**
+   * MentorSessionNote deleteMany
+   */
+  export type MentorSessionNoteDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorSessionNotes to delete
+     */
+    where?: MentorSessionNoteWhereInput
+    /**
+     * Limit how many MentorSessionNotes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MentorSessionNote without action
+   */
+  export type MentorSessionNoteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorSessionNote
+     */
+    select?: MentorSessionNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MentorSessionNote
+     */
+    omit?: MentorSessionNoteOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -8761,6 +9920,20 @@ export namespace Prisma {
   };
 
   export type UserStatusScalarFieldEnum = (typeof UserStatusScalarFieldEnum)[keyof typeof UserStatusScalarFieldEnum]
+
+
+  export const MentorSessionNoteScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    callNumber: 'callNumber',
+    notes: 'notes',
+    mentorId: 'mentorId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type MentorSessionNoteScalarFieldEnum = (typeof MentorSessionNoteScalarFieldEnum)[keyof typeof MentorSessionNoteScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9512,6 +10685,76 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableWithAggregatesFilter<"UserStatus"> | Date | string | null
   }
 
+  export type MentorSessionNoteWhereInput = {
+    AND?: MentorSessionNoteWhereInput | MentorSessionNoteWhereInput[]
+    OR?: MentorSessionNoteWhereInput[]
+    NOT?: MentorSessionNoteWhereInput | MentorSessionNoteWhereInput[]
+    id?: StringFilter<"MentorSessionNote"> | string
+    userId?: StringFilter<"MentorSessionNote"> | string
+    callNumber?: IntFilter<"MentorSessionNote"> | number
+    notes?: StringFilter<"MentorSessionNote"> | string
+    mentorId?: StringNullableFilter<"MentorSessionNote"> | string | null
+    createdAt?: DateTimeFilter<"MentorSessionNote"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorSessionNote"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"MentorSessionNote"> | Date | string | null
+  }
+
+  export type MentorSessionNoteOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    callNumber?: SortOrder
+    notes?: SortOrder
+    mentorId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+  }
+
+  export type MentorSessionNoteWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_callNumber?: MentorSessionNoteUserIdCallNumberCompoundUniqueInput
+    AND?: MentorSessionNoteWhereInput | MentorSessionNoteWhereInput[]
+    OR?: MentorSessionNoteWhereInput[]
+    NOT?: MentorSessionNoteWhereInput | MentorSessionNoteWhereInput[]
+    userId?: StringFilter<"MentorSessionNote"> | string
+    callNumber?: IntFilter<"MentorSessionNote"> | number
+    notes?: StringFilter<"MentorSessionNote"> | string
+    mentorId?: StringNullableFilter<"MentorSessionNote"> | string | null
+    createdAt?: DateTimeFilter<"MentorSessionNote"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorSessionNote"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"MentorSessionNote"> | Date | string | null
+  }, "id" | "userId_callNumber">
+
+  export type MentorSessionNoteOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    callNumber?: SortOrder
+    notes?: SortOrder
+    mentorId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: MentorSessionNoteCountOrderByAggregateInput
+    _avg?: MentorSessionNoteAvgOrderByAggregateInput
+    _max?: MentorSessionNoteMaxOrderByAggregateInput
+    _min?: MentorSessionNoteMinOrderByAggregateInput
+    _sum?: MentorSessionNoteSumOrderByAggregateInput
+  }
+
+  export type MentorSessionNoteScalarWhereWithAggregatesInput = {
+    AND?: MentorSessionNoteScalarWhereWithAggregatesInput | MentorSessionNoteScalarWhereWithAggregatesInput[]
+    OR?: MentorSessionNoteScalarWhereWithAggregatesInput[]
+    NOT?: MentorSessionNoteScalarWhereWithAggregatesInput | MentorSessionNoteScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MentorSessionNote"> | string
+    userId?: StringWithAggregatesFilter<"MentorSessionNote"> | string
+    callNumber?: IntWithAggregatesFilter<"MentorSessionNote"> | number
+    notes?: StringWithAggregatesFilter<"MentorSessionNote"> | string
+    mentorId?: StringNullableWithAggregatesFilter<"MentorSessionNote"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MentorSessionNote"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MentorSessionNote"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"MentorSessionNote"> | Date | string | null
+  }
+
   export type UserCreateInput = {
     id?: string
     firebaseUid: string
@@ -10255,6 +11498,83 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type MentorSessionNoteCreateInput = {
+    id?: string
+    userId: string
+    callNumber: number
+    notes?: string
+    mentorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type MentorSessionNoteUncheckedCreateInput = {
+    id?: string
+    userId: string
+    callNumber: number
+    notes?: string
+    mentorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type MentorSessionNoteUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    callNumber?: IntFieldUpdateOperationsInput | number
+    notes?: StringFieldUpdateOperationsInput | string
+    mentorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MentorSessionNoteUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    callNumber?: IntFieldUpdateOperationsInput | number
+    notes?: StringFieldUpdateOperationsInput | string
+    mentorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MentorSessionNoteCreateManyInput = {
+    id?: string
+    userId: string
+    callNumber: number
+    notes?: string
+    mentorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type MentorSessionNoteUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    callNumber?: IntFieldUpdateOperationsInput | number
+    notes?: StringFieldUpdateOperationsInput | string
+    mentorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MentorSessionNoteUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    callNumber?: IntFieldUpdateOperationsInput | number
+    notes?: StringFieldUpdateOperationsInput | string
+    mentorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -10831,6 +12151,52 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
+  }
+
+  export type MentorSessionNoteUserIdCallNumberCompoundUniqueInput = {
+    userId: string
+    callNumber: number
+  }
+
+  export type MentorSessionNoteCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    callNumber?: SortOrder
+    notes?: SortOrder
+    mentorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type MentorSessionNoteAvgOrderByAggregateInput = {
+    callNumber?: SortOrder
+  }
+
+  export type MentorSessionNoteMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    callNumber?: SortOrder
+    notes?: SortOrder
+    mentorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type MentorSessionNoteMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    callNumber?: SortOrder
+    notes?: SortOrder
+    mentorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type MentorSessionNoteSumOrderByAggregateInput = {
+    callNumber?: SortOrder
   }
 
   export type ApiKeyCreateNestedManyWithoutUserInput = {

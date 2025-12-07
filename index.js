@@ -4,6 +4,9 @@ const cookieParser = require('cookie-parser');
 const adminRoutes = require('./src/routes/adminRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const progressRoutes = require('./src/routes/progressRoutes');
+const apiKeyRoutes = require('./src/routes/apiKeyRoutes');
+const appliedJobRoutes = require('./src/routes/appliedJobRoutes');
+const mentorSessionNotesRoutes = require('./src/routes/mentorSessionNotesRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -54,6 +57,9 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/keys', apiKeyRoutes);
+app.use('/api/applied-jobs', appliedJobRoutes);
+app.use('/api/mentor-session-notes', mentorSessionNotesRoutes);
 app.use('/progress', progressRoutes);
 
 // Mentor routes alias (mentors use same admin routes)

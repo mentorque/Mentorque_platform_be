@@ -257,42 +257,73 @@ exports.getMe = async (req, res) => {
  */
 exports.getAdminStats = async (req, res) => {
   try {
-    if (!req.adminMentor.isAdmin) {
-      return res.status(403).json({
-        error: 'Access denied',
-        message: 'Only admins can access this endpoint',
+    const adminMentorId = req.adminMentor.id;
+    const isAdmin = req.adminMentor.isAdmin;
+
+    if (isAdmin) {
+      // Admin stats - all users and jobs
+      const [totalUsers, totalMentors, totalJobs] = await Promise.all([
+        prisma.user.count({
+          where: {
+            deletedAt: null,
+          },
+        }),
+        prisma.adminMentor.count({
+          where: {
+            isAdmin: false,
+            deletedAt: null,
+          },
+        }),
+        prisma.appliedJob.count({
+          where: {
+            deletedAt: null,
+          },
+        }),
+      ]);
+
+      return res.json({
+        stats: {
+          totalUsers,
+          totalMentors,
+          totalAppliedJobs: totalJobs,
+        },
+      });
+    } else {
+      // Mentor stats - only their assigned users
+      // Get all users assigned to this mentor
+      const assignedUserIds = await prisma.user.findMany({
+        where: {
+          mentorId: adminMentorId,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      const userIds = assignedUserIds.map(u => u.id);
+
+      // Count total applied jobs for assigned users
+      const totalAppliedJobs = await prisma.appliedJob.count({
+        where: {
+          userId: {
+            in: userIds,
+          },
+          deletedAt: null,
+        },
+      });
+
+      return res.json({
+        stats: {
+          totalUsers: assignedUserIds.length,
+          totalAppliedJobs: totalAppliedJobs,
+        },
       });
     }
-
-    // Get counts in parallel
-    const [totalUsers, totalMentors, totalJobs] = await Promise.all([
-      prisma.user.count({
-        where: {
-          deletedAt: null,
-        },
-      }),
-      prisma.adminMentor.count({
-        where: {
-          isAdmin: false,
-          deletedAt: null,
-        },
-      }),
-      prisma.appliedJob.count({
-        where: {
-          deletedAt: null,
-        },
-      }),
-    ]);
-
-    res.json({
-      totalUsers,
-      totalMentors,
-      totalAppliedJobs: totalJobs,
-    });
   } catch (error) {
     console.error('Get admin stats error:', error);
     res.status(500).json({
-      error: 'Failed to fetch admin stats',
+      error: 'Failed to fetch stats',
       message: error.message,
     });
   }
@@ -723,8 +754,12 @@ exports.getUserAppliedJobs = async (req, res) => {
 
     // Get pagination parameters
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || 10, 100);
+    const forStats = req.query.forStats === 'true';
+    const requestedLimit = parseInt(req.query.limit) || 10;
+    const maxLimit = forStats ? 1000 : 100;
+    const limit = Math.min(requestedLimit, maxLimit);
     const skip = (page - 1) * limit;
+    const timeFilter = req.query.timeFilter || 'all'; // 'all', '7days', '30days'
 
     // Check if user exists and access
     const user = await prisma.user.findFirst({
@@ -752,20 +787,33 @@ exports.getUserAppliedJobs = async (req, res) => {
       });
     }
 
-    // Get total count
+    // Build date filter
+    let dateFilter = {};
+    if (timeFilter === '7days') {
+      const last7Days = new Date();
+      last7Days.setDate(last7Days.getDate() - 7);
+      dateFilter = { appliedDate: { gte: last7Days } };
+    } else if (timeFilter === '30days') {
+      const last30Days = new Date();
+      last30Days.setDate(last30Days.getDate() - 30);
+      dateFilter = { appliedDate: { gte: last30Days } };
+    }
+
+    // Build where clause
+    const whereClause = {
+      userId,
+      deletedAt: null,
+      ...dateFilter,
+    };
+
+    // Get total count with filter
     const totalCount = await prisma.appliedJob.count({
-      where: {
-        userId,
-        deletedAt: null,
-      },
+      where: whereClause,
     });
 
-    // Get paginated jobs
+    // Get paginated jobs with filter
     const jobs = await prisma.appliedJob.findMany({
-      where: {
-        userId,
-        deletedAt: null,
-      },
+      where: whereClause,
           select: {
             id: true,
             title: true,
@@ -800,6 +848,106 @@ exports.getUserAppliedJobs = async (req, res) => {
     console.error('Get user applied jobs error:', error);
     res.status(500).json({
       error: 'Failed to fetch applied jobs',
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * GET /api/admin/users/:userId/jobs/stats
+ * Get applied jobs statistics for a user
+ */
+exports.getUserAppliedJobsStats = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const adminMentorId = req.adminMentor.id;
+    const isAdmin = req.adminMentor.isAdmin;
+    const timeFilter = req.query.timeFilter || 'all';
+
+    // Check if user exists and access
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        mentorId: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found',
+      });
+    }
+
+    // Check access
+    if (!isAdmin && user.mentorId !== adminMentorId) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'You can only view your assigned users',
+      });
+    }
+
+    // Get all jobs for stats calculation
+    const allJobs = await prisma.appliedJob.findMany({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+      select: {
+        appliedDate: true,
+        status: true,
+      },
+    });
+
+    // Calculate date ranges
+    const now = new Date();
+    const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const getFilterDate = () => {
+      const filter = timeFilter.toLowerCase();
+      const target = new Date();
+      if (filter === '7days') {
+        target.setDate(target.getDate() - 7);
+        target.setHours(0, 0, 0, 0);
+        return target;
+      }
+      if (filter === '30days') {
+        target.setDate(target.getDate() - 30);
+        target.setHours(0, 0, 0, 0);
+        return target;
+      }
+      return null;
+    };
+
+    const filterDate = getFilterDate();
+    const filteredJobsCount = filterDate
+      ? allJobs.filter((j) => new Date(j.appliedDate) >= filterDate).length
+      : allJobs.length;
+
+    // Calculate stats
+    const stats = {
+      total: allJobs.length,
+      filteredTotal: filteredJobsCount,
+      last7Days: allJobs.filter((j) => new Date(j.appliedDate) >= last7Days).length,
+      last30Days: allJobs.filter((j) => new Date(j.appliedDate) >= last30Days).length,
+      byStatus: {
+        Applied: allJobs.filter((j) => j.status === 'Applied').length,
+        'In Progress': allJobs.filter((j) => j.status === 'In Progress').length,
+        'Got Call Back': allJobs.filter((j) => j.status === 'Got Call Back').length,
+        'Received Offer': allJobs.filter((j) => j.status === 'Received Offer').length,
+        Rejected: allJobs.filter((j) => j.status === 'Rejected').length,
+      },
+    };
+
+    res.json({ stats });
+  } catch (error) {
+    console.error('Get user applied jobs stats error:', error);
+    res.status(500).json({
+      error: 'Failed to fetch applied jobs stats',
       message: error.message,
     });
   }

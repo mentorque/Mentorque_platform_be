@@ -225,6 +225,17 @@ exports.Prisma.UserStatusScalarFieldEnum = {
   deletedAt: 'deletedAt'
 };
 
+exports.Prisma.MentorSessionNoteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  callNumber: 'callNumber',
+  notes: 'notes',
+  mentorId: 'mentorId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -257,7 +268,8 @@ exports.Prisma.ModelName = {
   AppliedJob: 'AppliedJob',
   Progress: 'Progress',
   AdminMentor: 'AdminMentor',
-  UserStatus: 'UserStatus'
+  UserStatus: 'UserStatus',
+  MentorSessionNote: 'MentorSessionNote'
 };
 
 /**

@@ -10,6 +10,7 @@ router.get('/mentors', authenticateFirebaseToken, userController.getAllMentors);
 router.get('/me/status', authenticateFirebaseToken, userStatusController.getMyStatus);
 router.post('/me/book-call', authenticateFirebaseToken, userStatusController.bookCall);
 router.get('/me/verification', authenticateFirebaseToken, userController.getMyVerification);
+router.get('/me/mentor-session-notes', authenticateFirebaseToken, userController.getMySessionNotes);
 
 module.exports = router;
 

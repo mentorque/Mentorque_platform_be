@@ -149,6 +149,61 @@ exports.getMyVerification = async (req, res) => {
   }
 };
 
+/**
+ * GET /api/users/me/mentor-session-notes
+ * Get mentor session notes for authenticated user
+ */
+exports.getMySessionNotes = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const notes = await prisma.mentorSessionNote.findMany({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+      orderBy: {
+        callNumber: 'asc',
+      },
+    });
+
+    const callsData = [
+      {
+        callNumber: 1,
+        title: 'Resume Finalisation, Preparation Tips and Job Application Strategy',
+        notes: notes.find(n => n.callNumber === 1)?.notes || '',
+        updatedAt: notes.find(n => n.callNumber === 1)?.updatedAt || null,
+      },
+      {
+        callNumber: 2,
+        title: 'Progress Review and Strategy Adjustment',
+        notes: notes.find(n => n.callNumber === 2)?.notes || '',
+        updatedAt: notes.find(n => n.callNumber === 2)?.updatedAt || null,
+      },
+      {
+        callNumber: 3,
+        title: 'Mock Interview',
+        notes: notes.find(n => n.callNumber === 3)?.notes || '',
+        updatedAt: notes.find(n => n.callNumber === 3)?.updatedAt || null,
+      },
+      {
+        callNumber: 4,
+        title: 'Mock Interview',
+        notes: notes.find(n => n.callNumber === 4)?.notes || '',
+        updatedAt: notes.find(n => n.callNumber === 4)?.updatedAt || null,
+      },
+    ];
+
+    res.json({ calls: callsData });
+  } catch (error) {
+    console.error('Get my session notes error:', error);
+    res.status(500).json({
+      error: 'Failed to fetch mentor session notes',
+      message: error.message,
+    });
+  }
+};
+
 
 
 // hello

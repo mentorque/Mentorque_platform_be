@@ -17,6 +17,7 @@ router.get('/mentor/users', authenticateAdminToken, adminController.getMentorUse
 router.get('/all-users', authenticateAdminToken, adminController.getAllUsers);
 // DELETE route must come before GET route with same pattern to avoid conflicts
 router.delete('/mentors/:mentorId', authenticateAdminToken, adminController.deleteMentor);
+router.get('/mentors/:mentorId/stats', authenticateAdminToken, adminController.getMentorStats);
 router.get('/mentors', authenticateAdminToken, adminController.getAllMentors);
 router.get('/users/:userId', authenticateAdminToken, adminController.getUserDetails);
 router.get('/users/:userId/jobs', authenticateAdminToken, adminController.getUserAppliedJobs);

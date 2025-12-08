@@ -756,7 +756,7 @@ exports.getUserAppliedJobs = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const forStats = req.query.forStats === 'true';
     const requestedLimit = parseInt(req.query.limit) || 10;
-    const maxLimit = forStats ? 1000 : 100;
+    const maxLimit = forStats ? 10000 : 100;
     const limit = Math.min(requestedLimit, maxLimit);
     const skip = (page - 1) * limit;
     const timeFilter = req.query.timeFilter || 'all'; // 'all', '7days', '30days'
@@ -1814,6 +1814,14 @@ exports.getMentoringSessions = async (req, res) => {
       where: whereClause,
       include: {
         UserStatus: true,
+        mentor: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            picture: true,
+          },
+        },
       },
     });
 
@@ -1873,6 +1881,12 @@ exports.getMentoringSessions = async (req, res) => {
             scheduledAt: call.scheduledAt,
             googleMeetLink: call.googleMeet,
             completedAt: call.completedAt,
+            mentor: user.mentor ? {
+              id: user.mentor.id,
+              name: user.mentor.name,
+              email: user.mentor.email,
+              picture: user.mentor.picture,
+            } : null,
           });
         }
       });
@@ -2201,6 +2215,97 @@ exports.getUserScheduledCalls = async (req, res) => {
     console.error('Get user scheduled calls error:', error);
     res.status(500).json({
       error: 'Failed to fetch scheduled calls',
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * GET /api/admin/mentors/:mentorId/stats
+ * Get mentor statistics (number of mentees and calls taken) (admin only)
+ */
+exports.getMentorStats = async (req, res) => {
+  try {
+    if (!req.adminMentor.isAdmin) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'Only admins can access this endpoint',
+      });
+    }
+
+    const { mentorId } = req.params;
+
+    // Check if mentor exists
+    const mentor = await prisma.adminMentor.findFirst({
+      where: {
+        id: mentorId,
+        isAdmin: false,
+        deletedAt: null,
+      },
+    });
+
+    if (!mentor) {
+      return res.status(404).json({
+        error: 'Mentor not found',
+      });
+    }
+
+    // Get all users assigned to this mentor
+    const users = await prisma.user.findMany({
+      where: {
+        mentorId,
+        deletedAt: null,
+      },
+      include: {
+        UserStatus: true,
+      },
+    });
+
+    // Count total mentees
+    const totalMentees = users.length;
+
+    // Count total calls taken (completed calls)
+    let totalCallsTaken = 0;
+    users.forEach((user) => {
+      if (user.UserStatus && !user.UserStatus.deletedAt) {
+        const status = user.UserStatus;
+        if (status.firstMentorCallCompletedAt) totalCallsTaken++;
+        if (status.secondMentorCallCompletedAt) totalCallsTaken++;
+        if (status.thirdMentorCallCompletedAt) totalCallsTaken++;
+        if (status.fourthMentorCallCompletedAt) totalCallsTaken++;
+        if (status.fifthMentorCallCompletedAt) totalCallsTaken++;
+      }
+    });
+
+    const menteesList = users.map((user) => ({
+      id: user.id,
+      fullName: user.fullName,
+      email: user.email,
+      verifiedByAdmin: user.verifiedByAdmin,
+      goalPerDay: user.goalPerDay,
+    }))
+
+    res.json({
+      mentor: {
+        id: mentor.id,
+        name: mentor.name,
+        email: mentor.email,
+        picture: mentor.picture,
+        expertise: mentor.expertise,
+        company: mentor.company,
+        role: mentor.role,
+        verifiedByAdmin: mentor.verifiedByAdmin,
+      },
+      stats: {
+        totalMentees,
+        totalCallsTaken,
+        mentees: menteesList,
+      },
+    });
+  } catch (error) {
+    console.error('Get mentor stats error:', error);
+    res.status(500).json({
+      error: 'Failed to fetch mentor stats',
       message: error.message,
     });
   }

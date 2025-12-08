@@ -1,6 +1,7 @@
 const prisma = require('../utils/prisma');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const userStatusController = require('./userStatus');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
@@ -1787,6 +1788,95 @@ exports.scheduleMentorCall = async (req, res) => {
     console.error('Schedule mentor call error:', error);
     res.status(500).json({
       error: 'Failed to schedule mentor call',
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * PATCH /api/admin/users/:userId/calls/:callNumber/complete
+ * Mark a scheduled call as completed (admin only)
+ */
+exports.completeMentorCall = async (req, res) => {
+  try {
+    if (!req.adminMentor.isAdmin) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'Only admins can mark calls as completed',
+      });
+    }
+
+    const { userId, callNumber } = req.params;
+    const callNum = parseInt(callNumber, 10);
+
+    if (!callNum || callNum < 1 || callNum > 5) {
+      return res.status(400).json({
+        error: 'Invalid call number',
+        message: 'Call number must be between 1 and 5',
+      });
+    }
+
+    const userStatus = await prisma.userStatus.findFirst({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!userStatus) {
+      return res.status(404).json({
+        error: 'Status not found',
+        message: 'No status record exists for this user',
+      });
+    }
+
+    const scheduledFieldMap = {
+      1: 'firstMentorCallScheduledAt',
+      2: 'secondMentorCallScheduledAt',
+      3: 'thirdMentorCallScheduledAt',
+      4: 'fourthMentorCallScheduledAt',
+      5: 'fifthMentorCallScheduledAt',
+    };
+
+    const completionFieldMap = {
+      1: 'firstMentorCallCompletedAt',
+      2: 'secondMentorCallCompletedAt',
+      3: 'thirdMentorCallCompletedAt',
+      4: 'fourthMentorCallCompletedAt',
+      5: 'fifthMentorCallCompletedAt',
+    };
+
+    const scheduledField = scheduledFieldMap[callNum];
+    const completionField = completionFieldMap[callNum];
+
+    if (!userStatus[scheduledField]) {
+      return res.status(400).json({
+        error: 'Call not scheduled',
+        message: `Call ${callNum} is not scheduled yet`,
+      });
+    }
+
+    const updatedStatus = await prisma.userStatus.update({
+      where: { id: userStatus.id },
+      data: {
+        [completionField]: new Date(),
+      },
+    });
+
+    await userStatusController.updateMentorCallEligibility(userId, updatedStatus);
+
+    const finalStatus = await prisma.userStatus.findUnique({
+      where: { id: userStatus.id },
+    });
+
+    res.json({
+      message: `Mentor call ${callNum} marked as completed`,
+      userStatus: finalStatus,
+    });
+  } catch (error) {
+    console.error('Complete mentor call error:', error);
+    res.status(500).json({
+      error: 'Failed to mark call as completed',
       message: error.message,
     });
   }

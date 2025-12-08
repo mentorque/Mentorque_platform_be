@@ -42,6 +42,7 @@ router.get('/users/:userId/scheduled-calls', authenticateAdminToken, adminContro
 router.post('/users/:userId/schedule-call', authenticateAdminToken, adminController.scheduleMentorCall);
 router.patch('/users/:userId/update-call', authenticateAdminToken, adminController.updateScheduledCall);
 router.delete('/mentoring-sessions/:userId/:callNumber', authenticateAdminToken, adminController.deleteMentorCall);
+router.patch('/users/:userId/calls/:callNumber/complete', authenticateAdminToken, adminController.completeMentorCall);
 router.get('/mentoring-sessions', authenticateAdminToken, adminController.getMentoringSessions);
 
 module.exports = router;

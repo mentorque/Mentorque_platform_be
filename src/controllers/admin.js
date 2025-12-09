@@ -793,10 +793,12 @@ exports.getUserAppliedJobs = async (req, res) => {
     if (timeFilter === '7days') {
       const last7Days = new Date();
       last7Days.setDate(last7Days.getDate() - 7);
+      last7Days.setHours(0, 0, 0, 0); // Start of day to include all jobs from that day onwards
       dateFilter = { appliedDate: { gte: last7Days } };
     } else if (timeFilter === '30days') {
       const last30Days = new Date();
       last30Days.setDate(last30Days.getDate() - 30);
+      last30Days.setHours(0, 0, 0, 0); // Start of day to include all jobs from that day onwards
       dateFilter = { appliedDate: { gte: last30Days } };
     }
 
@@ -906,7 +908,9 @@ exports.getUserAppliedJobsStats = async (req, res) => {
     // Calculate date ranges
     const now = new Date();
     const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    last7Days.setHours(0, 0, 0, 0); // Start of day to include today
     const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    last30Days.setHours(0, 0, 0, 0); // Start of day to include today
 
     const getFilterDate = () => {
       const filter = timeFilter.toLowerCase();

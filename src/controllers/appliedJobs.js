@@ -40,8 +40,11 @@ async function getAppliedJobs(req, res) {
     // Calculate statistics
     const now = new Date();
     const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    last7Days.setHours(0, 0, 0, 0); // Start of day to include today
     const last10Days = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000);
+    last10Days.setHours(0, 0, 0, 0); // Start of day to include today
     const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    last30Days.setHours(0, 0, 0, 0); // Start of day to include today
 
     // Get all jobs for stats calculation
     const allJobs = await prisma.appliedJob.findMany({
